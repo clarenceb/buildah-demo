@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: buildah-demo
+  labels:
+    name: buildah-demo
+spec:
+  volumes:
+    - name: buildah-pv-storage
+      persistentVolumeClaim:
+        claimName: buildah-pvc
+  containers:
+  - name: buildah
+    image: <acr_reg_name>.azurecr.io/docker-buildah
+    imagePullPolicy: Always
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "1"
+    securityContext:
+      privileged: true
+      runAsUser: 1000
+    command: ["/bin/bash", "-c", "while true; do sleep 30; done"]
+    volumeMounts:
+    - name: buildah-pv-storage
+      mountPath: /var/lib/containers/storage
+  nodeSelector:
+    kubernetes.azure.com/os-sku: CBLMariner
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: buildah-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: managed-csi-premium
