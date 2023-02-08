@@ -31,7 +31,7 @@ FROM docker.io/nginx:latest
 
 RUN echo "Installing nginx"; apt update -y; apt install -y nginx
 
-# Expose the default httpd port 80
+# Expose the default nginx port 80
 EXPOSE 80
 
 # Run nginx
